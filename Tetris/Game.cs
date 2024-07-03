@@ -9,6 +9,7 @@ namespace Tetris
     public class Game
     {
         private readonly List<IGameObject> _gameObjects = new List<IGameObject>();
+        private DateTime _lastUpdated;
 
         public Game()
         {
@@ -22,23 +23,50 @@ namespace Tetris
             Initialize();
 
             IsRunning = true;
+            _lastUpdated = DateTime.Now;
 
+            RunGameLoop();
+        }
+
+        private void RunGameLoop()
+        {
             do
             {
-                Console.Clear();
-
-                foreach (var gameObject in _gameObjects)
-                {
-                    gameObject.Update(40);
-                }
-
-                foreach (var gameObject in _gameObjects)
-                {
-                    gameObject.Draw();
-                }
+                double elapsedMilliseconds = GetElapsedMilliseconds();
+                UpdateGameObjects(elapsedMilliseconds);
+                DrawGameObjects();
 
                 Thread.Sleep(40);
             } while (this.IsRunning);
+        }
+
+        private double GetElapsedMilliseconds()
+        {
+            DateTime now = DateTime.Now;
+            var elapsed = now.Subtract(_lastUpdated);
+            var elapsedMilliseconds = elapsed.TotalMilliseconds;
+            _lastUpdated = now;
+
+            return elapsedMilliseconds;
+        }
+
+        private void DrawGameObjects()
+        {
+            Console.Clear();
+
+            foreach (var gameObject in _gameObjects)
+            {
+                gameObject.Draw();
+            }
+        }
+
+        private void UpdateGameObjects(double elapsedMilliseconds)
+        {
+            var pressedKey = GetUserInput();
+            foreach (var gameObject in _gameObjects)
+            {
+                gameObject.Update(elapsedMilliseconds, pressedKey);
+            }
         }
 
         private void Initialize()
@@ -46,25 +74,26 @@ namespace Tetris
             _gameObjects.Add(new Area()
             {
                 Width = 10,
-                Height = 20,
+                Height = 15,
 
                 Shapes = new List<Shape>()
                 {
-                    new Shape()
-                    {
-                        X = 5,
-                        Y = 1,
-                        Blocks = new[]
-                        {
-                            new Block() { OffsetX = 0, OffsetY = 0 },
-
-                            new Block() { OffsetX = -1, OffsetY = 1 },
-                            new Block() { OffsetX = 0, OffsetY = 1 },
-                            new Block() { OffsetX = 1, OffsetY = 1 }
-                        }
-                    }
+                    ShapeFactory.CreatePyramid(5, 1)
                 }
             });
         }
+
+        private ConsoleKeyInfo? GetUserInput()
+        {
+            ConsoleKeyInfo? key = null;
+
+            if (Console.KeyAvailable)
+            {
+                key = Console.ReadKey();
+            }
+
+            return key;
+        }
+
     }
 }

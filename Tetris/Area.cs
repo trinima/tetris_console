@@ -15,12 +15,12 @@ namespace Tetris
 
         public void Draw()
         {
-            Console.SetCursorPosition(0, 0);
+            //Console.SetCursorPosition(0, 0);
 
-            for (int i = 0; i < Width; i++)
-            {
-                Console.Write("_");
-            }
+            //for (int i = 0; i < Width; i++)
+            //{
+            //    Console.Write("_");
+            //}
 
             Console.Clear();
 
@@ -30,12 +30,42 @@ namespace Tetris
             }
         }
 
-        public void Update(int milliseconds)
+        public void Update(double milliseconds, ConsoleKeyInfo? pressedKey)
         {
-            foreach (Shape shape in Shapes)
+            bool hasShapeHitFloor = false;
+
+            foreach (Shape shape in Shapes.Where(s => s.IsFalling))
             {
-                shape.Update(milliseconds);
+                shape.Update(milliseconds, pressedKey);
+
+                if (IsShapeOnFloor(shape))
+                {
+                    hasShapeHitFloor = true;
+                    ProcessShapeHitFloor(shape);
+                }
             }
+
+            if (hasShapeHitFloor)
+            {
+                SpawnNewShape();
+            }
+        }
+
+        private bool IsShapeOnFloor(Shape shape)
+        {
+            return shape.Y > Height;
+        }
+
+        private void ProcessShapeHitFloor(Shape shape)
+        {
+            shape.Y = Height;
+            shape.IsFalling = false;
+
+        }
+
+        private void SpawnNewShape()
+        {
+            this.Shapes.Add(ShapeFactory.CreateSquare(5, 1));
         }
     }
 }

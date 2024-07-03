@@ -9,7 +9,7 @@ namespace Tetris
     public interface IGameObject
     {
         void Draw();
-        void Update(int milliseconds);
+        void Update(double milliseconds, ConsoleKeyInfo? keyInfo);
 
     }
 }

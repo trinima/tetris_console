@@ -21,7 +21,7 @@ namespace Tetris
             Console.Write("\u2588");
         }
 
-        public void Update(int milliseconds)
+        public void Update(double milliseconds, ConsoleKeyInfo? keyInfo)
         {
         }
     }
