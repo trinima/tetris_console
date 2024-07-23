@@ -22,9 +22,6 @@ namespace Tetris
         {
             Initialize();
 
-            IsRunning = true;
-            _lastUpdated = DateTime.Now;
-
             RunGameLoop();
         }
 
@@ -71,16 +68,26 @@ namespace Tetris
 
         private void Initialize()
         {
-            _gameObjects.Add(new Area()
+            IsRunning = true;
+            _lastUpdated = DateTime.Now;
+            Console.CursorVisible = false;
+            var area = new Area()
             {
-                Width = 10,
-                Height = 15,
+                Width = 20,
+                Height = 30,
 
                 Shapes = new List<Shape>()
                 {
                     ShapeFactory.CreatePyramid(5, 1)
                 }
-            });
+            };
+
+            Console.SetWindowSize(area.Width + 5, area.Height + 5);
+            Console.SetBufferSize(area.Width + 5, area.Height + 5);
+
+            _gameObjects.Add(area);
+
+
         }
 
         private ConsoleKeyInfo? GetUserInput()
