@@ -24,5 +24,13 @@ namespace Tetris
         public void Update(double milliseconds, ConsoleKeyInfo? keyInfo)
         {
         }
+        public int GetAbsoluteX()
+        {
+            return this.OffsetX + this.X;
+        }
+        public int GetAbsoluteY()
+        {
+            return this.OffsetY + this.Y;
+        }
     }
 }

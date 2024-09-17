@@ -10,6 +10,7 @@ namespace Tetris
     {
         private readonly List<IGameObject> _gameObjects = new List<IGameObject>();
         private DateTime _lastUpdated;
+        private Area _area;
 
         public Game()
         {
@@ -31,7 +32,7 @@ namespace Tetris
             {
                 double elapsedMilliseconds = GetElapsedMilliseconds();
                 UpdateGameObjects(elapsedMilliseconds);
-                DrawGameObjects();
+                DrawGameObjects(elapsedMilliseconds );
 
                 Thread.Sleep(40);
             } while (this.IsRunning);
@@ -47,10 +48,10 @@ namespace Tetris
             return elapsedMilliseconds;
         }
 
-        private void DrawGameObjects()
+        private void DrawGameObjects(double elapsedMilliseconds)
         {
             Console.Clear();
-
+            Console.WriteLine(elapsedMilliseconds);
             foreach (var gameObject in _gameObjects)
             {
                 gameObject.Draw();
@@ -64,6 +65,7 @@ namespace Tetris
             {
                 gameObject.Update(elapsedMilliseconds, pressedKey);
             }
+            _area.CheckCollision();
         }
 
         private void Initialize()
@@ -78,7 +80,7 @@ namespace Tetris
 
                 Shapes = new List<Shape>()
                 {
-                    ShapeFactory.CreatePyramid(5, 1)
+                    ShapeFactory.CreateRightL(5, 1)
                 }
             };
 
@@ -86,7 +88,7 @@ namespace Tetris
             Console.SetBufferSize(area.Width + 5, area.Height + 5);
 
             _gameObjects.Add(area);
-
+            _area = area;
 
         }
 

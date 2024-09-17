@@ -43,11 +43,41 @@ namespace Tetris
                     hasShapeHitFloor = true;
                     ProcessShapeHitFloor(shape);
                 }
+                CheckXBoundaries(shape);
             }
 
             if (hasShapeHitFloor)
             {
                 SpawnNewShape();
+            }
+        }
+
+        private void CheckXBoundaries(Shape shape)
+        {
+            if (shape.X < 1)
+            {
+                shape.X = 1;
+            }
+            else if (shape.X > Width - 2)
+            {
+                shape.X = Width - 2;
+            }
+        }
+
+        public void CheckCollision()
+        {
+            var fallingShape = Shapes.FirstOrDefault(s => s.IsFalling);
+
+            if (fallingShape != null)
+            {
+                foreach (var shape in Shapes.Where(s => !s.IsFalling))
+                {
+                 if (fallingShape.IsCollidingWIthShape(shape))
+                    {
+                        fallingShape.IsFalling = false;
+                        break;
+                    }
+                }
             }
         }
 
@@ -65,7 +95,7 @@ namespace Tetris
 
         private void SpawnNewShape()
         {
-            this.Shapes.Add(ShapeFactory.CreateSquare(5, 1));
+            this.Shapes.Add(ShapeFactory.CreateRandomShape(5, 1));
         }
     }
 }
