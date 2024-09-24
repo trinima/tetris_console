@@ -9,8 +9,9 @@ namespace Tetris
     public class Game
     {
         private readonly List<IGameObject> _gameObjects = new List<IGameObject>();
-        private DateTime _lastUpdated;
         private Area _area;
+        private IScreenDrawer _screenDrawer;
+        private int _gameSpeed;
 
         public Game()
         {
@@ -30,32 +31,22 @@ namespace Tetris
         {
             do
             {
-                double elapsedMilliseconds = GetElapsedMilliseconds();
-                UpdateGameObjects(elapsedMilliseconds);
-                DrawGameObjects(elapsedMilliseconds );
-
-                Thread.Sleep(40);
+                UpdateGameObjects(_gameSpeed);
+                DrawGameObjects();
+                Thread.Sleep(_gameSpeed);
             } while (this.IsRunning);
         }
 
-        private double GetElapsedMilliseconds()
+        private void DrawGameObjects()
         {
-            DateTime now = DateTime.Now;
-            var elapsed = now.Subtract(_lastUpdated);
-            var elapsedMilliseconds = elapsed.TotalMilliseconds;
-            _lastUpdated = now;
-
-            return elapsedMilliseconds;
-        }
-
-        private void DrawGameObjects(double elapsedMilliseconds)
-        {
-            Console.Clear();
-            Console.WriteLine(elapsedMilliseconds);
-            foreach (var gameObject in _gameObjects)
+            foreach (var drawable in _gameObjects)
             {
-                gameObject.Draw();
+                drawable.Draw(_screenDrawer);
             }
+
+            char[] buffer = _screenDrawer.DrawFrame();
+            Console.SetCursorPosition(0, 0);
+            Console.Write(buffer);
         }
 
         private void UpdateGameObjects(double elapsedMilliseconds)
@@ -71,25 +62,22 @@ namespace Tetris
         private void Initialize()
         {
             IsRunning = true;
-            _lastUpdated = DateTime.Now;
+            _gameSpeed = 40;
             Console.CursorVisible = false;
+            var firstShape = ShapeFactory.CreateRandomShape(5, 1);
             var area = new Area()
             {
                 Width = 20,
                 Height = 30,
-
-                Shapes = new List<Shape>()
-                {
-                    ShapeFactory.CreateRightL(5, 1)
-                }
+                FallingShape = firstShape
             };
 
-            Console.SetWindowSize(area.Width + 5, area.Height + 5);
-            Console.SetBufferSize(area.Width + 5, area.Height + 5);
+            Console.SetWindowSize(area.Width, area.Height);
+            Console.SetBufferSize(area.Width, area.Height);
 
             _gameObjects.Add(area);
             _area = area;
-
+            _screenDrawer = new ScreenDrawer(_area.Height, _area.Width);
         }
 
         private ConsoleKeyInfo? GetUserInput()
@@ -98,11 +86,10 @@ namespace Tetris
 
             if (Console.KeyAvailable)
             {
-                key = Console.ReadKey();
+                key = Console.ReadKey(true);
             }
 
             return key;
         }
-
     }
 }

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Tetris
 {
-    public interface IGameObject
+    public interface IScreenDrawer
     {
-        void Draw(IScreenDrawer screenDrawer);
-        void Update(double milliseconds, ConsoleKeyInfo? keyInfo);
-
+        void Draw(int x, int y, char character);
+        public char[] DrawFrame();
     }
 }

@@ -10,40 +10,64 @@ namespace Tetris
 {
     public class Shape : IGameObject, IShapeCollidable
     {
-        private int elapsedTime = 0;
-        public int X { get; set; }
-        private int yPosition = 0;
-        public int Y
+        private int _elapsedTime = 0;
+        public int _xPosition = 0;
+        public int X
         {
-            get { return yPosition; }
+            get { return _xPosition; }
             set
             {
-                yPosition = value;
-                foreach (var block in Blocks) { block.Y = value; }
+                _xPosition = value;
+                foreach (var block in Blocks) {
+                    block.X = value;
+                }
             }
         }
-        public Block[] Blocks { get; set; } = [];
-        public bool IsFalling { get; set; } = true;
-
-        public void Draw()
+        private int _yPosition = 0;
+        public int Y
         {
+            get { return _yPosition; }
+            set
+            {
+                _yPosition = value;
+                foreach (var block in Blocks) {
+                    block.Y = value;
+                }
+            }
+        }
+
+        public int GetMinX()
+        {
+            return Blocks.Min(x => x.GetAbsoluteX());
+        }
+        public int GetMaxX()
+        {
+            return Blocks.Max(x => x.GetAbsoluteX());
+        }
+        public int GetMaxY()
+        {
+            return Blocks.Max(x => x.GetAbsoluteY());
+        }
+
+        public Block[] Blocks { get; set; } = [];
+
+        public void Draw(IScreenDrawer screenDrawer)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+
             foreach (var block in Blocks)
             {
-                block.Draw();
+                block.Draw(screenDrawer);
             }
         }
 
         public void Update(double milliseconds, ConsoleKeyInfo? pressedKey)
         {
             ProcessPressedKey(pressedKey);
-            elapsedTime += (int)milliseconds;
-            int numberOfPositionsToMoveDown = elapsedTime / 100;
-            elapsedTime %= 100;
+            _elapsedTime += (int)milliseconds;
+            int numberOfPositionsToMoveDown = _elapsedTime / 100;
+            _elapsedTime %= 100;
             MoveDown(numberOfPositionsToMoveDown);
-            foreach (var block in Blocks)
-            {
-                block.X = this.X;
-            }
         }
 
         private void ProcessPressedKey(ConsoleKeyInfo? pressedKey)
@@ -82,11 +106,11 @@ namespace Tetris
             this.Y+= positions;
         }
 
-        public bool IsCollidingWIthShape(Shape othershape)
+        public bool IsCollidingWithShape(Shape othershape)
         {
-   foreach (var otherblock in othershape.Blocks)
+            foreach (var otherblock in othershape.Blocks)
             {
-                if (this.Blocks.Any(b => b.GetAbsoluteX() == otherblock.GetAbsoluteX() && b.GetAbsoluteY() == otherblock.GetAbsoluteY() + 1))
+                if (this.Blocks.Any(b => b.GetAbsoluteX() == otherblock.GetAbsoluteX() && b.GetAbsoluteY() == otherblock.GetAbsoluteY()))
                 {
                     return true;
                 }

@@ -13,17 +13,15 @@ namespace Tetris
         public int OffsetX { get; set; }
         public int OffsetY { get; set; }
 
-        public void Draw()
+        public void Draw(IScreenDrawer screenDrawer)
         {
-            Console.SetCursorPosition(this.OffsetX + X, this.OffsetY + Y);
-            Console.ForegroundColor = ConsoleColor.Green;
-
-            Console.Write("\u2588");
+            screenDrawer.Draw(this.OffsetX + X, this.OffsetY + Y, '\u2588');
         }
 
         public void Update(double milliseconds, ConsoleKeyInfo? keyInfo)
         {
         }
+
         public int GetAbsoluteX()
         {
             return this.OffsetX + this.X;

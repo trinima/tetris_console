@@ -8,6 +8,6 @@ namespace Tetris
 {
     public interface IShapeCollidable
     {
-        bool IsCollidingWIthShape(Shape shape);
+        bool IsCollidingWithShape(Shape shape);
     }
 }

@@ -11,70 +11,53 @@ namespace Tetris
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public List<Shape> Shapes { get; set; }
+        public List<Shape> Shapes { get; set; } = [];
+        public Shape FallingShape { get; set; }
 
-        public void Draw()
+        public void Draw(IScreenDrawer screenDrawer)
         {
-            //Console.SetCursorPosition(0, 0);
-
-            //for (int i = 0; i < Width; i++)
-            //{
-            //    Console.Write("_");
-            //}
-
-            Console.Clear();
-
-            foreach (Shape shape in Shapes)
+            for (int shapeIndex = 0; shapeIndex < Shapes.Count; shapeIndex++)
             {
-                shape.Draw();
+                Shapes[shapeIndex].Draw(screenDrawer);
             }
+
+            FallingShape.Draw(screenDrawer);
         }
 
         public void Update(double milliseconds, ConsoleKeyInfo? pressedKey)
         {
-            bool hasShapeHitFloor = false;
+            FallingShape.Update(milliseconds, pressedKey);
 
-            foreach (Shape shape in Shapes.Where(s => s.IsFalling))
+            if (IsShapeOnFloor(FallingShape))
             {
-                shape.Update(milliseconds, pressedKey);
-
-                if (IsShapeOnFloor(shape))
-                {
-                    hasShapeHitFloor = true;
-                    ProcessShapeHitFloor(shape);
-                }
-                CheckXBoundaries(shape);
+                ProcessShapeStopped();
             }
 
-            if (hasShapeHitFloor)
-            {
-                SpawnNewShape();
-            }
+            CheckXBoundaries(FallingShape);
         }
 
         private void CheckXBoundaries(Shape shape)
         {
-            if (shape.X < 1)
+            if (shape.GetMinX() < 1)
             {
-                shape.X = 1;
+                shape.X++;
             }
-            else if (shape.X > Width - 2)
+            else if (shape.GetMaxX() >= this.Width)
             {
-                shape.X = Width - 2;
+                shape.X--;
             }
         }
 
         public void CheckCollision()
         {
-            var fallingShape = Shapes.FirstOrDefault(s => s.IsFalling);
-
-            if (fallingShape != null)
+            if (FallingShape != null)
             {
-                foreach (var shape in Shapes.Where(s => !s.IsFalling))
+                foreach (var shape in Shapes)
                 {
-                 if (fallingShape.IsCollidingWIthShape(shape))
+                    if (FallingShape.IsCollidingWithShape(shape))
                     {
-                        fallingShape.IsFalling = false;
+                        FallingShape.Y -= 1;
+                        ProcessShapeStopped();
                         break;
                     }
                 }
@@ -83,19 +66,13 @@ namespace Tetris
 
         private bool IsShapeOnFloor(Shape shape)
         {
-            return shape.Y > Height;
+            return shape.GetMaxY() >= Height - 1;
         }
 
-        private void ProcessShapeHitFloor(Shape shape)
+        private void ProcessShapeStopped()
         {
-            shape.Y = Height;
-            shape.IsFalling = false;
-
-        }
-
-        private void SpawnNewShape()
-        {
-            this.Shapes.Add(ShapeFactory.CreateRandomShape(5, 1));
+            Shapes.Add(FallingShape);
+            FallingShape = ShapeFactory.CreateRandomShape(5, 1);
         }
     }
 }
