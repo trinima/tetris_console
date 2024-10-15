@@ -10,7 +10,7 @@ public static class ShapeFactory
 {
     private static Shape MakeNewShape(int x, int y, params Block[] blocks)
     {
-        var shape = new Shape();
+        var shape = new Shape(null);
 
         shape.Blocks = blocks;
         shape.X = x;

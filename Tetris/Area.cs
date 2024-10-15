@@ -10,15 +10,26 @@ namespace Tetris
     {
         public int Width { get; set; }
         public int Height { get; set; }
+        public List<Block> Blocks { get; set; } = [];
 
         public List<Shape> Shapes { get; set; } = [];
-        public Shape FallingShape { get; set; }
+        private Shape _fallingShape;
+        public Shape FallingShape
+        {
+            get { return _fallingShape; }
+            set
+            {
+                _fallingShape = value;
+                this._fallingShape.Area = this;
+            }
+        }
+        public bool IsRunning { get;  set; }
 
         public void Draw(IScreenDrawer screenDrawer)
         {
-            for (int shapeIndex = 0; shapeIndex < Shapes.Count; shapeIndex++)
+            for (int blockIndex = 0; blockIndex < Blocks.Count; blockIndex++)
             {
-                Shapes[shapeIndex].Draw(screenDrawer);
+                Blocks[blockIndex].Draw(screenDrawer);
             }
 
             FallingShape.Draw(screenDrawer);
@@ -52,9 +63,9 @@ namespace Tetris
         {
             if (FallingShape != null)
             {
-                foreach (var shape in Shapes)
+                foreach (var Block in Blocks)
                 {
-                    if (FallingShape.IsCollidingWithShape(shape))
+                    if (FallingShape.IsCollidingWithBlock(Block))
                     {
                         FallingShape.Y -= 1;
                         ProcessShapeStopped();
@@ -71,7 +82,13 @@ namespace Tetris
 
         private void ProcessShapeStopped()
         {
-            Shapes.Add(FallingShape);
+            if (FallingShape.GetMinY() < 1)
+            {
+                IsRunning = false;
+                Console.SetCursorPosition(0, 0);
+                Console.WriteLine("Game Over");
+            }
+            Blocks.AddRange(FallingShape.Blocks);
             FallingShape = ShapeFactory.CreateRandomShape(5, 1);
         }
     }

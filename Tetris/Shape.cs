@@ -36,6 +36,10 @@ namespace Tetris
             }
         }
 
+        public int GetMinY()
+        {
+            return Blocks.Min(x => x.GetAbsoluteY());
+        }
         public int GetMinX()
         {
             return Blocks.Min(x => x.GetAbsoluteX());
@@ -50,7 +54,12 @@ namespace Tetris
         }
 
         public Block[] Blocks { get; set; } = [];
+        public Area Area { get; set; }
 
+        public Shape(Area area)
+        {
+            this.Area = area;
+        }
         public void Draw(IScreenDrawer screenDrawer)
         {
             Console.ForegroundColor = ConsoleColor.Green;
@@ -93,29 +102,32 @@ namespace Tetris
 
         private void MoveRight()
         {
-            this.X += 1;
+            MoveX(1);
         }
 
         private void MoveLeft()
         {
-            this.X -= 1;
+            MoveX(-1);
         }
-
+        private void MoveX(int positions)
+        {
+            this.X += positions;
+            if (this.Area.Blocks.Any(b => IsCollidingWithBlock(b)))
+            {
+                this.X-= positions;
+            }
+        }
         private void MoveDown(int positions)
         {
             this.Y+= positions;
         }
 
-        public bool IsCollidingWithShape(Shape othershape)
+        public bool IsCollidingWithBlock(Block otherblock)
         {
-            foreach (var otherblock in othershape.Blocks)
-            {
                 if (this.Blocks.Any(b => b.GetAbsoluteX() == otherblock.GetAbsoluteX() && b.GetAbsoluteY() == otherblock.GetAbsoluteY()))
                 {
                     return true;
                 }
-            }
-
             return false;
         }
     }

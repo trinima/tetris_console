@@ -34,11 +34,15 @@ namespace Tetris
                 UpdateGameObjects(_gameSpeed);
                 DrawGameObjects();
                 Thread.Sleep(_gameSpeed);
-            } while (this.IsRunning);
+            } while (this.IsRunning && _area.IsRunning);
         }
 
         private void DrawGameObjects()
         {
+            if (!_area.IsRunning)
+            {
+                return;
+            }
             foreach (var drawable in _gameObjects)
             {
                 drawable.Draw(_screenDrawer);
@@ -69,7 +73,8 @@ namespace Tetris
             {
                 Width = 20,
                 Height = 30,
-                FallingShape = firstShape
+                FallingShape = firstShape,
+                IsRunning = true
             };
 
             Console.SetWindowSize(area.Width, area.Height);
