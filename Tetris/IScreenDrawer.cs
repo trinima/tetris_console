@@ -9,7 +9,7 @@ namespace Tetris
 {
     public interface IScreenDrawer
     {
-        void Draw(int x, int y, char character);
-        public char[] DrawFrame();
+        void Draw(int x, int y, char character, ConsoleColor? color);
+        DrawCharacter[] DrawFrame();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,8 @@ namespace Tetris
 {
     public class ScreenDrawer : IScreenDrawer
     {
-        private char[] _defaultBuffer;
+        private ConsoleColor DEFAULT_COLOR = ConsoleColor.White;
+        private DrawCharacter[] _defaultBuffer;
         private int[] _yOffsets;
 
         public ScreenDrawer(int height, int width)
@@ -22,11 +24,11 @@ namespace Tetris
             Buffer = GetCopyOfBuffer(_defaultBuffer);
         }
 
-        public char[] Buffer { get; private set; }
+        public DrawCharacter[] Buffer { get; private set; }
         public int Height { get; }
         public int Width { get; }
 
-        public void Draw(int x, int y, char character)
+        public void Draw(int x, int y, char character, ConsoleColor? color)
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
             {
@@ -34,10 +36,10 @@ namespace Tetris
             }
 
             int bufferIndex = GetBufferIndex(x, y);
-            Buffer[bufferIndex] = character;
+            Buffer[bufferIndex] = new DrawCharacter(character, color ?? DEFAULT_COLOR);
         }
 
-        public char[] DrawFrame()
+        public DrawCharacter[] DrawFrame()
         {
             var outputBuffer = Buffer;
             Buffer = GetCopyOfBuffer(_defaultBuffer);
@@ -56,15 +58,15 @@ namespace Tetris
             return offsets;
         }
 
-        private char[] ConstructDefaultBuffer(int height, int width, int[] yOffsets)
+        private DrawCharacter[] ConstructDefaultBuffer(int height, int width, int[] yOffsets)
         {
-            char[] buffer = new char[width * height + height];
+            DrawCharacter[] buffer = new DrawCharacter[width * height + height];
 
             SetBufferToCharacter(buffer, ' ');
 
             for (int y = 0; y < height; y++)
             {
-                buffer[yOffsets[y]] = '\n';
+                buffer[yOffsets[y]] = new DrawCharacter('\n', DEFAULT_COLOR);
             }
 
             return buffer;
@@ -73,18 +75,18 @@ namespace Tetris
         private int GetBufferIndex(int x, int y) =>
             x + _yOffsets[y];
 
-        private char[] GetCopyOfBuffer(char[] original)
+        private DrawCharacter[] GetCopyOfBuffer(DrawCharacter[] original)
         {
-            var copy = new char[original.Length];
+            var copy = new DrawCharacter[original.Length];
             original.CopyTo(copy, 0);
             return copy;
         }
 
-        private void SetBufferToCharacter(char[] buffer, char character)
+        private void SetBufferToCharacter(DrawCharacter[] buffer, char character)
         {
             for (int i = 0; i < buffer.Length; i++)
             {
-                buffer[i] = character;
+                buffer[i] = new DrawCharacter(character, DEFAULT_COLOR);
             }
         }
     }

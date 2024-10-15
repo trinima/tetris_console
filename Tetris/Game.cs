@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,9 +49,18 @@ namespace Tetris
                 drawable.Draw(_screenDrawer);
             }
 
-            char[] buffer = _screenDrawer.DrawFrame();
+            DrawCharacter[] buffer = _screenDrawer.DrawFrame();
             Console.SetCursorPosition(0, 0);
-            Console.Write(buffer);
+
+            for (int bufferIndex = 0; bufferIndex < buffer.Length; bufferIndex++)
+            {
+                if (Console.ForegroundColor != buffer[bufferIndex].Color)
+                {
+                    Console.ForegroundColor = buffer[bufferIndex].Color;
+                }
+
+                Console.Write(buffer[bufferIndex].Character);
+            }
         }
 
         private void UpdateGameObjects(double elapsedMilliseconds)
