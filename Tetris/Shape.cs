@@ -62,8 +62,6 @@ namespace Tetris
         }
         public void Draw(IScreenDrawer screenDrawer)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-
             foreach (var block in Blocks)
             {
                 block.Draw(screenDrawer);
