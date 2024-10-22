@@ -44,6 +44,14 @@ namespace Tetris
             var outputBuffer = Buffer;
             Buffer = GetCopyOfBuffer(_defaultBuffer);
             return outputBuffer;
+            //return new DrawCharacter [] 
+            //{ 
+            //new DrawCharacter('\n', DEFAULT_COLOR),
+            //  new DrawCharacter('n', DEFAULT_COLOR),
+            //    new DrawCharacter('j', DEFAULT_COLOR),
+            //      new DrawCharacter('\n', DEFAULT_COLOR),
+            //        new DrawCharacter('p', DEFAULT_COLOR),
+            //};
         }
 
         private int[] CalculateYOffsets(int height, int width)

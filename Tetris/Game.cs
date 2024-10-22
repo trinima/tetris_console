@@ -50,18 +50,20 @@ namespace Tetris
             }
 
             DrawCharacter[] buffer = _screenDrawer.DrawFrame();
-            Console.SetCursorPosition(0, 0);
+            Console.SetCursorPosition(1, 1);
+            //Console.WriteLine("jigglypuff");
+            //Console.WriteLine(DateTime.Now);
+            //for (int bufferIndex = 0; bufferIndex < buffer.Length; bufferIndex++)
+            //{
+            //    if (Console.ForegroundColor != buffer[bufferIndex].Color)
+            //    {
+            //        Console.ForegroundColor = buffer[bufferIndex].Color;
+            //    }
 
-            for (int bufferIndex = 0; bufferIndex < buffer.Length; bufferIndex++)
-            {
-                if (Console.ForegroundColor != buffer[bufferIndex].Color)
-                {
-                    Console.ForegroundColor = buffer[bufferIndex].Color;
-                }
-
-                Console.Write(buffer[bufferIndex].Character);
-            }
-        }
+            //    Console.Write(buffer[bufferIndex].Character);
+            //}
+            Console.Write(buffer.Select(x => x.Character).ToArray());
+       }
 
         private void UpdateGameObjects(double elapsedMilliseconds)
         {
@@ -86,13 +88,17 @@ namespace Tetris
                 FallingShape = firstShape,
                 IsRunning = true
             };
-
+            Console.ForegroundColor = ConsoleColor.White;
             Console.SetWindowSize(area.Width, area.Height);
             Console.SetBufferSize(area.Width, area.Height);
 
             _gameObjects.Add(area);
             _area = area;
             _screenDrawer = new ScreenDrawer(_area.Height, _area.Width);
+            for (int i = 0; i < area.Height; i++)
+            {
+                Console.WriteLine("JigglypuffJigglypuff");
+            }
         }
 
         private ConsoleKeyInfo? GetUserInput()
