@@ -1,5 +1,6 @@
 ﻿using Tetris;
 
-var game = new Game();
-
-game.Start();
+using (var game = new Game())
+{
+    game.Start();
+}

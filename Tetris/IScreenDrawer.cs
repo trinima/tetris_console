@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Tetris
 {
-    public interface IScreenDrawer
+    public interface IScreenDrawer : IDisposable
     {
-        void Draw(int x, int y, char character, Color? color);
+        void Draw(int x, int y, char character, Color color);
         void Clear();
     }
 }

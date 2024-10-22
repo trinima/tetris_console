@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Tetris
 {
-    public class Game
+    public class Game : IDisposable
     {
         private readonly List<IGameObject> _gameObjects = new List<IGameObject>();
         private Area _area;
@@ -95,6 +95,11 @@ namespace Tetris
             }
 
             return key;
+        }
+
+        public void Dispose()
+        {
+            this._screenDrawer.Dispose();
         }
     }
 }

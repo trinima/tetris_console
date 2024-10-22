@@ -44,7 +44,7 @@ namespace Tetris
         public int Height { get; }
         public int Width { get; }
 
-        public void Draw(int x, int y, char character, Color? color)
+        public void Draw(int x, int y, char character, Color color)
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
             {
@@ -52,7 +52,7 @@ namespace Tetris
             }
 
             RectangleF rectangle = new RectangleF(x * 10, y * 10, 10, 10);
-            this._graphics.FillRectangle(new SolidBrush(Color.Purple), rectangle);
+            this._graphics.FillRectangle(new SolidBrush(color), rectangle);
         }
 
 
