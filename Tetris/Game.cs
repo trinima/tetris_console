@@ -44,22 +44,12 @@ namespace Tetris
             {
                 return;
             }
+
+            _screenDrawer.Clear();
+
             foreach (var drawable in _gameObjects)
             {
                 drawable.Draw(_screenDrawer);
-            }
-
-            DrawCharacter[] buffer = _screenDrawer.DrawFrame();
-            Console.SetCursorPosition(0, 0);
-
-            for (int bufferIndex = 0; bufferIndex < buffer.Length; bufferIndex++)
-            {
-                if (Console.ForegroundColor != buffer[bufferIndex].Color)
-                {
-                    Console.ForegroundColor = buffer[bufferIndex].Color;
-                }
-
-                Console.Write(buffer[bufferIndex].Character);
             }
         }
 

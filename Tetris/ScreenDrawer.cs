@@ -4,47 +4,70 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace Tetris
 {
-    public class ScreenDrawer : IScreenDrawer
+    public class ScreenDrawer : IScreenDrawer, IDisposable
     {
+        [DllImport("User32.dll")]
+        public static extern nint GetDC(nint hwnd);
+        [DllImport("User32.dll")]
+        public static extern void ReleaseDC(nint hwnd, nint dc);
+
+
+
         private ConsoleColor DEFAULT_COLOR = ConsoleColor.White;
-        private DrawCharacter[] _defaultBuffer;
+        private DrawCharacter[,] _defaultBuffer;
         private int[] _yOffsets;
+        private Graphics _graphics;
+        private IntPtr _desktopPtr;
 
         public ScreenDrawer(int height, int width)
         {
             Height = height;
             Width = width;
 
+            this._desktopPtr = GetDC(IntPtr.Zero);
+            this._graphics = Graphics.FromHdc(_desktopPtr);
+
+
+
             _yOffsets = CalculateYOffsets(height, width);
 
-            _defaultBuffer = ConstructDefaultBuffer(height, width, _yOffsets);
-            Buffer = GetCopyOfBuffer(_defaultBuffer);
+            //_defaultBuffer = ConstructDefaultBuffer(height, width, _yOffsets);
+            //Buffer = GetCopyOfBuffer(_defaultBuffer);
         }
 
-        public DrawCharacter[] Buffer { get; private set; }
+        public DrawCharacter[,] Buffer { get; private set; }
         public int Height { get; }
         public int Width { get; }
 
-        public void Draw(int x, int y, char character, ConsoleColor? color)
+        public void Draw(int x, int y, char character, Color? color)
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
             {
                 return;
             }
 
-            int bufferIndex = GetBufferIndex(x, y);
-            Buffer[bufferIndex] = new DrawCharacter(character, color ?? DEFAULT_COLOR);
+            RectangleF rectangle = new RectangleF(x * 10, y * 10, 10, 10);
+            this._graphics.FillRectangle(new SolidBrush(Color.Purple), rectangle);
         }
 
-        public DrawCharacter[] DrawFrame()
+
+        public void Clear()
         {
-            var outputBuffer = Buffer;
-            Buffer = GetCopyOfBuffer(_defaultBuffer);
-            return outputBuffer;
+            this._graphics.Clear(Color.White);
         }
+
+        //public DrawCharacter[] DrawFrame()
+        //{
+
+        //    //var outputBuffer = Buffer;
+        //    //Buffer = GetCopyOfBuffer(_defaultBuffer);
+        //    //return outputBuffer;
+        //}
 
         private int[] CalculateYOffsets(int height, int width)
         {
@@ -88,6 +111,12 @@ namespace Tetris
             {
                 buffer[i] = new DrawCharacter(character, DEFAULT_COLOR);
             }
+        }
+
+        public void Dispose()
+        {
+            this._graphics.Dispose();
+            ReleaseDC(IntPtr.Zero, _desktopPtr);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Tetris
 
         public void Draw(IScreenDrawer screenDrawer)
         {
-            screenDrawer.Draw(this.OffsetX + X, this.OffsetY + Y, '\u2588', ConsoleColor.Yellow);
+            screenDrawer.Draw(this.OffsetX + X, this.OffsetY + Y, '\u2588', Color.Yellow);
         }
 
         public void Update(double milliseconds, ConsoleKeyInfo? keyInfo)
