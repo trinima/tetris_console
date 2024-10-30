@@ -85,8 +85,8 @@ namespace Tetris
             if (FallingShape.GetMinY() < 1)
             {
                 IsRunning = false;
-                Console.SetCursorPosition(0, 0);
-                Console.WriteLine("Game Over");
+                //Console.SetCursorPosition(0, 0);
+                //Console.WriteLine("Game Over");
             }
             Blocks.AddRange(FallingShape.Blocks);
             FallingShape = ShapeFactory.CreateRandomShape(5, 1);

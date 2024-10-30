@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Tetris
 {
-    public class Game : IDisposable
+    public class Game
     {
         private readonly List<IGameObject> _gameObjects = new List<IGameObject>();
         private Area _area;
-        private IScreenDrawer _screenDrawer;
         private int _gameSpeed;
 
         public Game()
@@ -33,25 +33,36 @@ namespace Tetris
             do
             {
                 UpdateGameObjects(_gameSpeed);
-                DrawGameObjects();
                 Thread.Sleep(_gameSpeed);
             } while (this.IsRunning && _area.IsRunning);
         }
 
-        private void DrawGameObjects()
+        public void Draw(Graphics graphics)
         {
-            if (!_area.IsRunning)
-            {
-                return;
-            }
+            var screenDrawer = new ScreenDrawer(_area.Height, _area.Width, graphics);
 
-            _screenDrawer.Clear();
+            screenDrawer.Clear();
 
             foreach (var drawable in _gameObjects)
             {
-                drawable.Draw(_screenDrawer);
+                drawable.Draw(screenDrawer);
             }
         }
+
+        //private void DrawGameObjects()
+        //{
+        //    if (!_area.IsRunning)
+        //    {
+        //        return;
+        //    }
+
+        //    _screenDrawer.Clear();
+
+        //    foreach (var drawable in _gameObjects)
+        //    {
+        //        drawable.Draw(_screenDrawer);
+        //    }
+        //}
 
         private void UpdateGameObjects(double elapsedMilliseconds)
         {
@@ -67,7 +78,6 @@ namespace Tetris
         {
             IsRunning = true;
             _gameSpeed = 40;
-            Console.CursorVisible = false;
             var firstShape = ShapeFactory.CreateRandomShape(5, 1);
             var area = new Area()
             {
@@ -77,29 +87,21 @@ namespace Tetris
                 IsRunning = true
             };
 
-            Console.SetWindowSize(area.Width, area.Height);
-            Console.SetBufferSize(area.Width, area.Height);
-
             _gameObjects.Add(area);
             _area = area;
-            _screenDrawer = new ScreenDrawer(_area.Height, _area.Width);
         }
 
         private ConsoleKeyInfo? GetUserInput()
         {
-            ConsoleKeyInfo? key = null;
+            return null;
+            //ConsoleKeyInfo? key = null;
 
-            if (Console.KeyAvailable)
-            {
-                key = Console.ReadKey(true);
-            }
+            //if (Console.KeyAvailable)
+            //{
+            //    key = Console.ReadKey(true);
+            //}
 
-            return key;
-        }
-
-        public void Dispose()
-        {
-            this._screenDrawer.Dispose();
+            //return key;
         }
     }
 }

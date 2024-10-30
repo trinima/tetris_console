@@ -16,7 +16,7 @@ namespace Tetris
 
         public void Draw(IScreenDrawer screenDrawer)
         {
-            screenDrawer.Draw(this.OffsetX + X, this.OffsetY + Y, '\u2588', Color.Yellow);
+            screenDrawer.Draw(this.OffsetX + X, this.OffsetY + Y, '\u2588', Color.Purple);
         }
 
         public void Update(double milliseconds, ConsoleKeyInfo? keyInfo)

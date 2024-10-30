@@ -4,36 +4,24 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace Tetris
 {
-    public class ScreenDrawer : IScreenDrawer, IDisposable
+    public class ScreenDrawer : IScreenDrawer
     {
-        [DllImport("User32.dll")]
-        public static extern nint GetDC(nint hwnd);
-        [DllImport("User32.dll")]
-        public static extern void ReleaseDC(nint hwnd, nint dc);
-
-
-
         private ConsoleColor DEFAULT_COLOR = ConsoleColor.White;
         private DrawCharacter[,] _defaultBuffer;
         private int[] _yOffsets;
         private Graphics _graphics;
         private IntPtr _desktopPtr;
 
-        public ScreenDrawer(int height, int width)
+        public ScreenDrawer(int height, int width, Graphics graphics)
         {
             Height = height;
             Width = width;
 
-            this._desktopPtr = GetDC(IntPtr.Zero);
-            this._graphics = Graphics.FromHdc(_desktopPtr);
-
-
-
+            _graphics = graphics;
             _yOffsets = CalculateYOffsets(height, width);
 
             //_defaultBuffer = ConstructDefaultBuffer(height, width, _yOffsets);
@@ -60,14 +48,6 @@ namespace Tetris
         {
             this._graphics.Clear(Color.White);
         }
-
-        //public DrawCharacter[] DrawFrame()
-        //{
-
-        //    //var outputBuffer = Buffer;
-        //    //Buffer = GetCopyOfBuffer(_defaultBuffer);
-        //    //return outputBuffer;
-        //}
 
         private int[] CalculateYOffsets(int height, int width)
         {
@@ -111,12 +91,6 @@ namespace Tetris
             {
                 buffer[i] = new DrawCharacter(character, DEFAULT_COLOR);
             }
-        }
-
-        public void Dispose()
-        {
-            this._graphics.Dispose();
-            ReleaseDC(IntPtr.Zero, _desktopPtr);
         }
     }
 }
